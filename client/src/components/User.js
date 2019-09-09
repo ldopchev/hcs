@@ -13,10 +13,7 @@ export default class User extends React.Component{
     }
 
     componentDidMount() {
-        const transport = axios.create({
-            withCredentials: true
-          })
-        transport.get("http://localhost:3001/")
+        axios.get("http://localhost:3001/", { withCredentials: true })
             .then((response) => {
                 console.log(response);
             })
