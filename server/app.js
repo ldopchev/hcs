@@ -23,7 +23,10 @@ const app = express();
 const port = 3001;
 
 //CORS Policy
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}));
 
 // BodyParser 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -43,24 +46,20 @@ app.use(passport.session());
 
 
 app.use("/api", userRouter);
-// app.use(auth);
 
-app.get('/', (req, res) => {
+app.get('/', (req, res, next) => {
     console.log(req.user);
-    console.log(req.session.user);
-    res.send("Main Page");
-});
-
-function auth(req, res, next) {
+    console.log(req.session);
+    // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    // res.setHeader("Access-Control-Allow-Credentials", "true");
     if(!req.user) {
-        var err = new Error('Access Denied!');
-        // res.setHeader('WWW-Authenticate', 'Basic');                          
-        err.status = 403;
-        next(err)
+        err = new Error("Unauthenticated request");
+        res.status(403);
+        next(err);
     } else {
-        next();
+        res.send(req.user);
     }
-}
-
+    
+});
 
 app.listen(port, () => console.log("The server is running on port " + port));

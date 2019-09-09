@@ -35,7 +35,9 @@ userRouter.get('/login', (req, res) => {
 });
 
 userRouter.post('/login', passport.authenticate('local'), (req, res) => {
+    console.log(req.user);
     res.json({success: true, status: 'You are successfully logged in!'});
 });
+
 
 module.exports = userRouter;

@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import {Redirect} from 'react-router-dom';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -7,7 +8,8 @@ export default class Login extends React.Component {
 
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            redirect: false
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -23,10 +25,11 @@ export default class Login extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        axios.post("http://localhost:3001/api/login", this.state)
+        axios.post("http://localhost:3001/api/login", {username: this.state.username, password: this.state.password})
         .then((response) => {
             if(response.status === 200) {
                 console.log(response.data);
+                this.setState({redirect: true});
             }
         })
         .catch((err) => {
@@ -34,15 +37,24 @@ export default class Login extends React.Component {
         });
     }
 
+    renderRedirect = () => {
+        if (this.state.redirect) {
+           return <Redirect to='/' />
+        }
+      }
+
     render() {
         return(
-            <form onSubmit={this.handleSubmit} >
-                <label htmlFor="username">Username:</label>
-                <input type="text" id="username" name="username" onChange={this.handleChange}/>
-                <label htmlFor="passport">Password:</label>
-                <input type="password" id="password" name="password" onChange={this.handleChange} />
-                <button type="submit">Login</button>
-            </form>
+            <>
+                {this.renderRedirect()}
+                <form onSubmit={this.handleSubmit} >
+                    <label htmlFor="username">Username:</label>
+                    <input type="text" id="username" name="username" onChange={this.handleChange}/>
+                    <label htmlFor="passport">Password:</label>
+                    <input type="password" id="password" name="password" onChange={this.handleChange} />
+                    <button type="submit">Login</button>
+                </form>
+            </>
         )
     }
 }
